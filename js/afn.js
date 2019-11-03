@@ -1,44 +1,25 @@
-var alfabeto;
-var inicial;
-var final;
-var estados = [];
-var $ = go.GraphObject.make;
-
-var model = $(go.GraphLinksModel);
+var alfabeto, inicial, final, estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel);
 
 function dividir() {
   skeleton();
-  var entrada = document.getElementById("afn").value;
-  var arrayLi = entrada.split('\n');
+  var entrada = document.getElementById("afn").value, arrayLi = entrada.split('\n');
   for (var i = 0; i < arrayLi.length; i++) {
-    organizar(arrayLi[i].split(':'))
+    mkDia(arrayLi[i].split(':'))
   }
 }
-function organizar(lines) {
+function mkDia(lines) {
   for (let i = 0; i < lines.length; i++) {
-
     if (lines[i] == 'AB') {
-      i++;
-       alfabeto = lines[i];
-      console.log("alfabeto é " + alfabeto);
+       alfabeto = lines[++i];
     } else if (lines[i] == 'i') {
-      i++;
-      inicial = lines[i]; //pegar info do esrado inicial
-      console.log("inicial é " + inicial);
+      inicial = lines[++i];
     } else if (lines[i] == 'f') {
-      i++;
-      final = lines[i]; //pegar info do esrado final
-      console.log("final é " + final);
+      final = lines[++i];
     } else {
       var est = lines[i].split(' ');
 
       if (!alfabeto.includes(est[01])) {
-        document.getElementById("myDiagramDiv").style.display = "none";
-        document.getElementById("divBtn").innerHTML = "";
-        document.getElementById("divAfn").style.display = "none";
-        document.getElementById("erro").innerHTML = "Oop. Formato errado, seu alfabeto é " + alfabeto;
-        document.getElementById("erro").style.display = "block";
-        document.getElementById("restart").style.display = "block";
+        hideOnError();
       }
 
       if (!estados.includes(est[0])) {
@@ -55,9 +36,9 @@ function organizar(lines) {
 
       if (est[2]) {
         if (est[2].indexOf(',') != -1) {
-          var firstComingOfChrist = est[2].substring(0, est[2].indexOf(','));
-          var secondComingOfChrist = est[2].substring(est[2].indexOf(',') + 1, est[2].length);
-          console.log("christ" + secondComingOfChrist);
+          let firstComingOfChrist = est[2].substring(0, est[2].indexOf(','));
+          let secondComingOfChrist = est[2].substring(est[2].indexOf(',') + 1, est[2].length);
+                  
           var link = { from: est[0], to: firstComingOfChrist, text: est[1] };
           model.addLinkData(link);
 
@@ -78,7 +59,7 @@ function skeleton() {
       $(go.Shape, "Circle",
         {
           fill: $(go.Brush, "Linear", { 0: "rgb(0, 150, 173)", 1: "rgb(0, 87, 173)" }),
-          stroke: "rgb(0, 150, 173)", strokeWidth: 0,
+          stroke: null,
           fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
           toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true
         }),
@@ -115,15 +96,22 @@ function skeleton() {
           new go.Binding("text"))
       )
     );
-  /* model.nodeDataArray = [];
-   model.linkDataArray = [];*/
   myDiagram.model = model;
+  hideOnSkeleton();
+}
+
+function hideOnError() {
+  document.getElementById("myDiagramDiv").style.display = "none";
+  document.getElementById("divBtn").innerHTML = "";
+  document.getElementById("divAfn").style.display = "none";
+  document.getElementById("erro").innerHTML = "Oop. Formato errado, seu alfabeto é " + alfabeto;
+  document.getElementById("erro").style.display = "block";
+  document.getElementById("restart").style.display = "block";
+}
+
+function hideOnSkeleton() {
   document.getElementById("myDiagramDiv").style.display = "block";
   document.getElementById("restart").style.display = "block";
   document.getElementById("divBtn").innerHTML = "";
   document.getElementById("divAfn").style.display = "none";
-}
-
-function reload() {
-  location.reload();
 }
