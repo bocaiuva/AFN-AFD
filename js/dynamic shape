@@ -1,0 +1,13 @@
+var shape = new go.Shape();
+ 
+        shape.figure = "Circle";
+                    
+        if (v.final)
+            shape.figure = "Ring";
+
+        if (v.initial) {
+            shape.fill = "lightblue";
+        } else {
+            shape.fill = "White";
+        }
+ 
