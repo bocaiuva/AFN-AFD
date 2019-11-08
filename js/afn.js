@@ -16,9 +16,9 @@ function mkDia(lines) {
     if (lines[i] == 'AB') {
        alfabeto = lines[++i];
     } else if (lines[i] == 'i') {
-      inicial = lines[++i];
+      inicial = new String(lines[++i]).valueOf();
     } else if (lines[i] == 'f') {
-      final = lines[++i];
+      final = new String(lines[++i]).valueOf();
     } else {
       var est = lines[i].split(' ');
       origem.push(est[0]);
@@ -29,12 +29,31 @@ function mkDia(lines) {
       }
 
       if (!estados.includes(est[0])) {
-        var node = { key: est[0], name: est[0] };
+        if (new String(est[0]).valueOf().trim() == inicial.trim()) {  
+          model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
+          model.addLinkData({ from: 'ini', to: est[0], text: '' });
+        }
+        if (new String(est[0]).valueOf().trim() == final.trim()) {
+          var node = { key: est[0], name: est[0], fig: "Ring" };
+        } else {
+          var node = { key: est[0], name: est[0] };
+        }
+        
         model.addNodeData(node);
         estados.push(est[0]);
 
         if (est[0] != est[2] && !estados.includes(est[2])) {
-          node = { key: est[2], name: est[2] };
+          if (new String(est[2]).valueOf().trim() == inicial.trim()) {  
+            model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
+            model.addLinkData({ from: 'ini', to: est[2], text: '' });
+          }
+
+          if (new String(est[2]).valueOf().trim() == final.trim()) {
+            var node = { key: est[2], name: est[2], fig: "Ring"};
+          } else {
+            var node = { key: est[2], name: est[2]};
+          }
+          
           model.addNodeData(node);
           estados.push(est[2]);
         }
@@ -68,10 +87,12 @@ function skeleton() {
           stroke: null,
           fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
           toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true
-        }),
+        }, new go.Binding("figure", "fig")),
+        
       $(go.TextBlock, "Default Text",
-        { margin: 12, stroke: "white", font: "bold 16px sans-serif" },
-        new go.Binding("text", "name"))
+        { margin: 12, stroke: "black", font: "bold 16px sans-serif" },
+        new go.Binding("text", "name")),
+        new go.Binding("size", "size")  
     );
 
   myDiagram.linkTemplate =
@@ -102,6 +123,7 @@ function skeleton() {
           new go.Binding("text"))
       )
     );
+    
   myDiagram.model = model;
   hideOnSkeleton();
 }
