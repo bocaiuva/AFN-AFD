@@ -1,4 +1,4 @@
-var alfabeto, inicial, final, estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel);
+var alfabeto, inicial, final, estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel), estadosAfd = [];
 
 function dividir() {
   skeleton();
@@ -10,25 +10,45 @@ function dividir() {
 function mkDia(lines) {
   for (let i = 0; i < lines.length; i++) {
     if (lines[i] == 'AB') {
-       alfabeto = lines[++i];
+      alfabeto = lines[++i];
     } else if (lines[i] == 'i') {
-      inicial = lines[++i];
+      inicial = new String(lines[++i]).valueOf();
     } else if (lines[i] == 'f') {
-      final = lines[++i];
+      final = new String(lines[++i]).valueOf();
     } else {
       var est = lines[i].split(' ');
+
+
 
       if (!alfabeto.includes(est[01])) {
         hideOnError();
       }
 
       if (!estados.includes(est[0])) {
-        var node = { key: est[0], name: est[0] };
+        if (new String(est[0]).valueOf().trim() == inicial.trim()) {
+          model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
+          model.addLinkData({ from: 'ini', to: est[0], text: '' });
+        }
+        if (new String(est[0]).valueOf().trim() == final.trim()) {
+          var node = { key: est[0], name: est[0], fig: "Ring" };
+        } else {
+          var node = { key: est[0], name: est[0] };
+        }
+
         model.addNodeData(node);
         estados.push(est[0]);
 
         if (est[0] != est[2] && !estados.includes(est[2])) {
-          node = { key: est[2], name: est[2] };
+          if (new String(est[2]).valueOf().trim() == inicial.trim()) {
+            model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
+            model.addLinkData({ from: 'ini', to: est[2], text: '' });
+          }
+
+          if (new String(est[2]).valueOf().trim() == final.trim()) {
+            var node = { key: est[2], name: est[2], fig: "Ring" };
+          } else {
+            var node = { key: est[2], name: est[2] };
+          }
           model.addNodeData(node);
           estados.push(est[2]);
         }
@@ -38,7 +58,7 @@ function mkDia(lines) {
         if (est[2].indexOf(',') != -1) {
           let firstComingOfChrist = est[2].substring(0, est[2].indexOf(','));
           let secondComingOfChrist = est[2].substring(est[2].indexOf(',') + 1, est[2].length);
-                  
+
           var link = { from: est[0], to: firstComingOfChrist, text: est[1] };
           model.addLinkData(link);
 
@@ -62,10 +82,12 @@ function skeleton() {
           stroke: null,
           fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
           toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true
-        }),
+        }, new go.Binding("figure", "fig")),
+        
       $(go.TextBlock, "Default Text",
-        { margin: 12, stroke: "white", font: "bold 16px sans-serif" },
-        new go.Binding("text", "name"))
+        { margin: 12, stroke: "black", font: "bold 16px sans-serif" },
+        new go.Binding("text", "name")),
+        new go.Binding("size", "size")  
     );
 
   myDiagram.linkTemplate =
@@ -96,6 +118,7 @@ function skeleton() {
           new go.Binding("text"))
       )
     );
+    
   myDiagram.model = model;
   hideOnSkeleton();
 }
@@ -115,3 +138,4 @@ function hideOnSkeleton() {
   document.getElementById("divBtn").innerHTML = "";
   document.getElementById("divAfn").style.display = "none";
 }
+
