@@ -6,6 +6,7 @@ function dividir() {
   for (var i = 0; i < arrayLi.length; i++) {
     mkDia(arrayLi[i].split(':'))
   }
+  afnTOafd(origem, caminho, chegada);
 }
 function mkDia(lines) {
   for (let i = 0; i < lines.length; i++) {
@@ -34,7 +35,6 @@ function mkDia(lines) {
         } else {
           var node = { key: est[0], name: est[0] };
         }
-
         model.addNodeData(node);
         estados.push(est[0]);
 
