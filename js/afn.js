@@ -1,5 +1,7 @@
-var alfabeto, inicial = [], final = [], estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel);
-var origem = [], caminho = [], chegada = [];
+var alfabeto, inicial, final, estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel);
+var origem=[];
+var caminho=[];
+var chegada=[];
 
 function dividir() {
   skeleton();
@@ -12,55 +14,42 @@ function dividir() {
 function mkDia(lines) {
   for (let i = 0; i < lines.length; i++) {
     if (lines[i] == 'AB') {
-      alfabeto = lines[++i];
+       alfabeto = lines[++i];
     } else if (lines[i] == 'i') {
-      inicial = lines[++i].trim().split(',');
+      inicial = lines[++i];
     } else if (lines[i] == 'f') {
-      final = lines[++i].trim().split(',');
+      final = lines[++i];
     } else {
       var est = lines[i].split(' ');
-      origem.push(est[0]); caminho.push(est[1]); chegada.push(est[2]);
-
+      origem.push(est[0]);
+      caminho.push(est[1]);
+      chegada.push(est[2]);
       if (!alfabeto.includes(est[1])) {
         hideOnError();
       }
 
       if (!estados.includes(est[0])) {
-        if (inicial.includes(new String(est[0]).valueOf().trim())) {
-          model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-          model.addLinkData({ from: 'ini', to: est[0], text: '' });
-        }
-        if (final.includes(new String(est[0]).valueOf().trim())) {
-          var node = { key: est[0], name: est[0], fig: "Ring" };
-        } else {
-          var node = { key: est[0], name: est[0] };
-        }
-
+        var node = { key: est[0], name: est[0] };
         model.addNodeData(node);
         estados.push(est[0]);
 
         if (est[0] != est[2] && !estados.includes(est[2])) {
-          if (inicial.includes(new String(est[2]).valueOf().trim())) {
-            model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-            model.addLinkData({ from: 'ini', to: est[2], text: '' });
-          }
-
-          if (final.includes(new String(est[2]).valueOf().trim())) {
-            var node = { key: est[2], name: est[2], fig: "Ring" };
-          } else {
-            var node = { key: est[2], name: est[2] };
-          }
+          node = { key: est[2], name: est[2] };
           model.addNodeData(node);
           estados.push(est[2]);
         }
       }
+
       if (est[2]) {
         if (est[2].indexOf(',') != -1) {
-          estatinhos = est[2].trim().split(',');
-          for (let i = 0; i < estatinhos.length; i++) {
-            link = { from: est[0], to: estatinhos[i], text: est[1] };
-            model.addLinkData(link);
-          }
+          let firstComingOfChrist = est[2].substring(0, est[2].indexOf(','));
+          let secondComingOfChrist = est[2].substring(est[2].indexOf(',') + 1, est[2].length);
+                  
+          var link = { from: est[0], to: firstComingOfChrist, text: est[1] };
+          model.addLinkData(link);
+
+          link = { from: est[0], to: secondComingOfChrist, text: est[1] };
+          model.addLinkData(link);
         }
       }
       link = { from: est[0], to: est[2], text: est[1] };
@@ -79,17 +68,16 @@ function skeleton() {
           stroke: null,
           fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
           toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true
-        }, new go.Binding("figure", "fig")),
-
+        }),
       $(go.TextBlock, "Default Text",
-        { margin: 12, stroke: "black", font: "bold 16px sans-serif" },
+        { margin: 12, stroke: "white", font: "bold 16px sans-serif" },
         new go.Binding("text", "name"))
     );
 
   myDiagram.linkTemplate =
     $(go.Link,
       {
-        adjusting: go.Link.Stretch,
+        curve: go.Link.Bezier, adjusting: go.Link.Stretch,
         toShortLength: 3
       },
       new go.Binding("points"),
@@ -114,7 +102,6 @@ function skeleton() {
           new go.Binding("text"))
       )
     );
-
   myDiagram.model = model;
   hideOnSkeleton();
 }
@@ -135,55 +122,83 @@ function hideOnSkeleton() {
   document.getElementById("divAfn").style.display = "none";
 }
 
-function afnTOafd(ori, cam, che) {
-  var afd = [];
-  var teste = [];
-  var novaORI = [];
-  var novaCHE = [];
+function afnTOafd(ori, cam, che){
+  var afd =[];
+  var teste =[];
+  var novaORI=[];
+  var novaCHEZ=[];
+  var novaCHEU=[]; 
   var split;
   novaORI[0] = che;
 
-  for (let i = 0; i < ori.length; i++) {
+  for(let i=0;i<ori.length; i++){
     //para pegar respostas separadas
     split = che[i].split(',')
-    if (split.length > 1) {
-      for (let j = 0; j < ori.length; j++) {
-        if (split[0] == ori[j] && cam[j] == 0) {
-          novaCHE.push(che[j]);
-          //console.log(novaCHE);
-        } if (split[0] == ori[j] && cam[j] == 1) {
-          novaCHE.push(che[j]);
-          //console.log(novaCHE);
-        } if (split[1] == ori[j] && cam[j] == 0) {
-          novaCHE.push(che[j]);
-          // console.log(novaCHE);
-        } if (split[1] == ori[j] && cam[j] == 1) {
-          novaCHE.push(che[j]);
-          //console.log(novaCHE)
+    if(split.length > 1 ){
+      for(let j=0; j<ori.length; j++){
+        if(split[0] == ori[j] && cam[j] == 0){
+          novaCHEZ.push(che[j]); 
+          console.log(novaCHEZ);
+        }if(split[0] == ori[j] && cam[j]== 1){
+          novaCHEU.push(che[j]);
+          console.log(novaCHEU);
+        }if(split[1] == ori[j] && cam[j] == 0){
+          novaCHEZ.push(che[j]); 
+          console.log(novaCHEZ);
+        }if(split[1] == ori[j] && cam[j]== 1){
+          novaCHEU.push(che[j]);
+          console.log(novaCHEU);
         }
       }
-      console.log(novaCHE);
-      //para tirar duplicas das respostas
-      for (let j = 0; j < novaCHE.length; j++) {
-        split = novaCHE[j].split(',');
-        if (split.length > 1) {
-          for (let k = 0; k < novaCHE.length; k++) {
-            if (split[0] == novaCHE[k]) {
-              for (let m = 0; m < novaCHE.length; m++) {
-                novaCHE[m] = novaCHE[m + 1];
-                if (novaCHE[m] == undefined) {
-                  novaCHE[m] = "";
-                }
-              }
+      //para tirar duplicas das respostas que tem caminho 0
+      for(let j=0; j <novaCHEZ.length;j++){
+        if(novaCHEZ.length >1){
+        split = novaCHEZ[j].split(',');
+          for(let k=0; k <novaCHEZ.length; k++){
+          if(split[0] == novaCHEZ[k] ){
+            for(let m=0; m <novaCHEZ.length; m++){
+            novaCHEZ[m] = novaCHEZ[m+1];
+            if(novaCHEZ[m] == undefined){
+              novaCHEZ[m] = "";
+            }
             }
           }
         }
+      }else{
+         for(let m=0; m <novaCHEZ.length; m++){
+            novaCHEZ[m] = novaCHEZ[m+1];
+            if(novaCHEZ[m] == undefined){
+              novaCHEZ[m] = "";
       }
-      a = '';
-      //tentando pegar as respostas e juntar em 1 posição so pra mandar
-      //teste.push("" + novaCHE[i] + "" + novaCHE[i + 1] + "" + novaCHE[i + 2] + "")
-      che[i + 1] = a.concat('{', novaCHE[i], ',', novaCHE[i + 1], ',', novaCHE[i + 2], '}')
-      //console.log(che[i+1])
+    }
+     //para tirar duplicas das respostas que tem caminho 1
+      for(let j=0; j <novaCHEU.length;j++){
+        if(novaCHEU.length >1){
+        split = novaCHEU[j].split(',');
+          for(let k=0; k <novaCHEU.length; k++){
+          if(split[0] == novaCHEU[k] ){
+            for(let m=0; m <novaCHEU.length; m++){
+            novaCHEU[m] = novaCHEU[m+1];
+            if(novaCHEU[m] == undefined){
+              console.log("ndefinido")
+              novaCHEU[m] = "";
+            }
+            }
+          }
+        }
+      }else{
+         for(let m=0; m <novaCHEU.length; m++){
+            novaCHEU[m] = novaCHEU[m+1];
+            if(novaCHEU[m] == undefined){
+              novaCHEU[m] = "";
+      }
+    }
+    console.log(novaCHEZ)
+    console.log(novaCHEU)
+    //tentando pegar as respostas e juntar em 1 posição so pra mandar
+    che[i].concat(novaCHEZ,novaCHEU);
+   
+    console.log(che)
     }
   }
 }
