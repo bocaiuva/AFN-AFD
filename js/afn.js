@@ -1,7 +1,5 @@
-var alfabeto, inicial, final, estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel);
-var origem = [];
-var caminho = [];
-var chegada = [];
+var alfabeto, inicial = [], final = [], estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel);
+var origem = [], caminho = [], chegada = [];
 
 function dividir() {
   skeleton();
@@ -16,24 +14,23 @@ function mkDia(lines) {
     if (lines[i] == 'AB') {
       alfabeto = lines[++i];
     } else if (lines[i] == 'i') {
-      inicial = new String(lines[++i]).valueOf();
+      inicial = lines[++i].trim().split(',');
     } else if (lines[i] == 'f') {
-      final = new String(lines[++i]).valueOf();
+      final = lines[++i].trim().split(',');
     } else {
       var est = lines[i].split(' ');
-      origem.push(est[0]);
-      caminho.push(est[1]);
-      chegada.push(est[2]);
+      origem.push(est[0]); caminho.push(est[1]); chegada.push(est[2]);
+
       if (!alfabeto.includes(est[1])) {
         hideOnError();
       }
 
       if (!estados.includes(est[0])) {
-        if (new String(est[0]).valueOf().trim() == inicial.trim()) {
+        if (inicial.includes(new String(est[0]).valueOf().trim())) {
           model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           model.addLinkData({ from: 'ini', to: est[0], text: '' });
         }
-        if (new String(est[0]).valueOf().trim() == final.trim()) {
+        if (final.includes(new String(est[0]).valueOf().trim())) {
           var node = { key: est[0], name: est[0], fig: "Ring" };
         } else {
           var node = { key: est[0], name: est[0] };
@@ -43,32 +40,27 @@ function mkDia(lines) {
         estados.push(est[0]);
 
         if (est[0] != est[2] && !estados.includes(est[2])) {
-          if (new String(est[2]).valueOf().trim() == inicial.trim()) {
+          if (inicial.includes(new String(est[2]).valueOf().trim())) {
             model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
             model.addLinkData({ from: 'ini', to: est[2], text: '' });
           }
 
-          if (new String(est[2]).valueOf().trim() == final.trim()) {
+          if (final.includes(new String(est[2]).valueOf().trim())) {
             var node = { key: est[2], name: est[2], fig: "Ring" };
           } else {
             var node = { key: est[2], name: est[2] };
           }
-
           model.addNodeData(node);
           estados.push(est[2]);
         }
       }
-
       if (est[2]) {
         if (est[2].indexOf(',') != -1) {
-          let firstComingOfChrist = est[2].substring(0, est[2].indexOf(','));
-          let secondComingOfChrist = est[2].substring(est[2].indexOf(',') + 1, est[2].length);
-
-          var link = { from: est[0], to: firstComingOfChrist, text: est[1] };
-          model.addLinkData(link);
-
-          link = { from: est[0], to: secondComingOfChrist, text: est[1] };
-          model.addLinkData(link);
+          estatinhos = est[2].trim().split(',');
+          for (let i = 0; i < estatinhos.length; i++) {
+            link = { from: est[0], to: estatinhos[i], text: est[1] };
+            model.addLinkData(link);
+          }
         }
       }
       link = { from: est[0], to: est[2], text: est[1] };
@@ -97,7 +89,7 @@ function skeleton() {
   myDiagram.linkTemplate =
     $(go.Link,
       {
-        curve: go.Link.Bezier, adjusting: go.Link.Stretch,
+        adjusting: go.Link.Stretch,
         toShortLength: 3
       },
       new go.Binding("points"),
@@ -158,18 +150,19 @@ function afnTOafd(ori, cam, che) {
       for (let j = 0; j < ori.length; j++) {
         if (split[0] == ori[j] && cam[j] == 0) {
           novaCHE.push(che[j]);
-          console.log(novaCHE);
+          //console.log(novaCHE);
         } if (split[0] == ori[j] && cam[j] == 1) {
           novaCHE.push(che[j]);
-          console.log(novaCHE);
+          //console.log(novaCHE);
         } if (split[1] == ori[j] && cam[j] == 0) {
           novaCHE.push(che[j]);
-          console.log(novaCHE);
+          // console.log(novaCHE);
         } if (split[1] == ori[j] && cam[j] == 1) {
           novaCHE.push(che[j]);
-          console.log(novaCHE);
+          //console.log(novaCHE)
         }
       }
+      console.log(novaCHE);
       //para tirar duplicas das respostas
       for (let j = 0; j < novaCHE.length; j++) {
         split = novaCHE[j].split(',');
@@ -182,15 +175,15 @@ function afnTOafd(ori, cam, che) {
                   novaCHE[m] = "";
                 }
               }
-              console.log(novaCHE)
             }
           }
         }
       }
+      a = '';
       //tentando pegar as respostas e juntar em 1 posição so pra mandar
-      teste.push("" + novaCHE[i] + "" + novaCHE[i + 1] + "" + novaCHE[i + 2] + "")
-      che[i + 1] = teste
-      console.log(che)
+      //teste.push("" + novaCHE[i] + "" + novaCHE[i + 1] + "" + novaCHE[i + 2] + "")
+      che[i + 1] = a.concat('{', novaCHE[i], ',', novaCHE[i + 1], ',', novaCHE[i + 2], '}')
+      //console.log(che[i+1])
     }
   }
 }
