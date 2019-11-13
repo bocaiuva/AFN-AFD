@@ -137,52 +137,70 @@ function hideOnSkeleton() {
 
 function afnTOafd(ori, cam, che) {
   var afd = [];
-  var teste = [];
+  var teste;
+  var testada;
   var novaORI = [];
+  var novaCHEZ = [];
   var novaCHE = [];
+  var uni;
+  var duni;
   var split;
-  novaORI[0] = che;
+  novaORI = che;
 
   for (let i = 0; i < ori.length; i++) {
     //para pegar respostas separadas
-    split = che[i].split(',')
+    split = novaORI[i].split(',')
     if (split.length > 1) {
       for (let j = 0; j < ori.length; j++) {
         if (split[0] == ori[j] && cam[j] == 0) {
-          novaCHE.push(che[j]);
-          //console.log(novaCHE);
+          novaCHEZ.push(che[j]);
+          //console.log(novaCHEZ);
         } if (split[0] == ori[j] && cam[j] == 1) {
           novaCHE.push(che[j]);
-          //console.log(novaCHE);
+         // console.log(novaCHE);
         } if (split[1] == ori[j] && cam[j] == 0) {
-          novaCHE.push(che[j]);
-          // console.log(novaCHE);
+          novaCHEZ.push(che[j]);
+         //  console.log(novaCHEZ);
         } if (split[1] == ori[j] && cam[j] == 1) {
           novaCHE.push(che[j]);
-          //console.log(novaCHE)
+         // console.log(novaCHE)
         }
       }
-      console.log(novaCHE);
-      //para tirar duplicas das respostas
-      for (let j = 0; j < novaCHE.length; j++) {
-        split = novaCHE[j].split(',');
-        if (split.length > 1) {
-          for (let k = 0; k < novaCHE.length; k++) {
-            if (split[0] == novaCHE[k]) {
-              for (let m = 0; m < novaCHE.length; m++) {
-                novaCHE[m] = novaCHE[m + 1];
-                if (novaCHE[m] == undefined) {
-                  novaCHE[m] = "";
-                }
-              }
-            }
-          }
+      //apos pegar as respostas separadas pelos caminhos 0 e 1
+      //eu filtro 0(chez) em teste e 1(che)em testada
+      //esse filter serve pra tirar null e undefined dos arrays
+      teste = novaCHE.filter(Boolean)
+      testada = novaCHEZ.filter(Boolean)
+      //apos isso eu concateno os testes filtrados em outra variavel
+      //dessa forma a variavel uni fica com todos os dados de teste concatenados
+      //e a variavel duni fica com os dados de testada
+        if(teste.length>1){
+          console.log(teste+"teste")
+        uni = teste[0]+","+teste[1];
+        }else{
+          uni = teste;
+        }
+        if(testada.length>1){
+        duni = testada[0] +","+ testada[1];
+        }else{
+          duni = testada;
+        }
+        //aqui é para jogar as respostas criando o afd
+      for(let k =0; k<i; k++){
+        if(cam[k] ==0 && che[k] != teste ){
+          novaORI[k] = teste;
+          console.log(novaORI)
+        }
+        if(cam[k]==1 && che[k] != testada){
+          novaORI[k] = testada
+          console.log(novaORI)
         }
       }
-      a = '';
+        console.log(novaORI)
+      
       //tentando pegar as respostas e juntar em 1 posição so pra mandar
       //teste.push("" + novaCHE[i] + "" + novaCHE[i + 1] + "" + novaCHE[i + 2] + "")
-      che[i + 1] = a.concat('{', novaCHE[i], ',', novaCHE[i + 1], ',', novaCHE[i + 2], '}')
+      //che[i + 1] = a.concat('{', novaCHE[i], ',', novaCHE[i + 1], ',', novaCHE[i + 2], '}')
       //console.log(che[i+1])
     }
   }
