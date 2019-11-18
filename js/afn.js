@@ -7,7 +7,9 @@ function dividir() {
   for (var i = 0; i < arrayLi.length; i++) {
     mkDia(arrayLi[i].split(':'))
   }
-  afnTOafd(origem, caminho, chegada);
+  var novoEstado = criandoEstados(origem, caminho, chegada);
+  console.log(novoEstado)
+  gerarAFD(novoEstado,origem,caminho,chegada)
 }
 function mkDia(lines) {
   for (let i = 0; i < lines.length; i++) {
@@ -135,8 +137,7 @@ function hideOnSkeleton() {
   document.getElementById("divAfn").style.display = "none";
 }
 
-function afnTOafd(ori, cam, che) {
-  var afd = [];
+function criandoEstados(ori, cam, che) {
   var teste;
   var testada;
   var novaORI = [];
@@ -145,63 +146,166 @@ function afnTOafd(ori, cam, che) {
   var uni;
   var duni;
   var split;
-  novaORI = che;
+  var contSplit=0;
+  novaORI = che.slice();
 
-  for (let i = 0; i < ori.length; i++) {
+  for (let i = 0; i < novaORI.length; i++) {
     //para pegar respostas separadas
-    split = novaORI[i].split(',')
+    split = novaORI[i].split(',').filter(Boolean)
+    //aqui ele pega o split caso exista uma separação
+    //e entao arquiva as respostas com o caminho 0
+    //depois com o caminho 1
     if (split.length > 1) {
+      
       for (let j = 0; j < ori.length; j++) {
-        if (split[0] == ori[j] && cam[j] == 0) {
+        if (split[contSplit] == ori[j] && cam[j] == alfabeto[1]) {
           novaCHEZ.push(che[j]);
-          //console.log(novaCHEZ);
-        } if (split[0] == ori[j] && cam[j] == 1) {
-          novaCHE.push(che[j]);
-         // console.log(novaCHE);
-        } if (split[1] == ori[j] && cam[j] == 0) {
-          novaCHEZ.push(che[j]);
-         //  console.log(novaCHEZ);
-        } if (split[1] == ori[j] && cam[j] == 1) {
-          novaCHE.push(che[j]);
-         // console.log(novaCHE)
+          
+          contSplit++;
+          j=0;
         }
       }
+      contSplit=0
+        for(let j = 0; j<ori.length; j++){
+         if (split[contSplit] == ori[j] && cam[j] == alfabeto[3]) {
+          novaCHE.push(che[j]);
+         
+          contSplit++;
+          j=0
+        }
+      }
+      contSplit=0;
       //apos pegar as respostas separadas pelos caminhos 0 e 1
       //eu filtro 0(chez) em teste e 1(che)em testada
       //esse filter serve pra tirar null e undefined dos arrays
       teste = novaCHE.filter(Boolean)
       testada = novaCHEZ.filter(Boolean)
+      //dou um set aqui para evitar de acontecer
+      //duplicas que podem causar loop infinito
+      teste = [...new Set(teste)]
+      testada = [...new Set(testada)]
       //apos isso eu concateno os testes filtrados em outra variavel
       //dessa forma a variavel uni fica com todos os dados de teste concatenados
       //e a variavel duni fica com os dados de testada
         if(teste.length>1){
-          console.log(teste+"teste")
-        uni = teste[0]+","+teste[1];
+          for(let k = 0; k < teste.length;k++){
+        uni = teste.join(",")
+          }
         }else{
           uni = teste;
         }
         if(testada.length>1){
-        duni = testada[0] +","+ testada[1];
+          for(let k = 0; k < testada.length;k++){
+        duni = testada.join(",")
+          }
         }else{
           duni = testada;
         }
-        //aqui é para jogar as respostas criando o afd
-      for(let k =0; k<i; k++){
-        if(cam[k] ==0 && che[k] != teste ){
-          novaORI[k] = teste;
-          console.log(novaORI)
+        //aqui verificamos se já existe um estado
+        //caso não exista ele é colocado no novaORI
+        if(repetiu(uni,novaORI)){
+          novaORI[i+1] = teste+'';
+          novaORI.length = i+2 
         }
-        if(cam[k]==1 && che[k] != testada){
-          novaORI[k] = testada
-          console.log(novaORI)
+        if(repetiu(duni,novaORI)){
+          novaORI[i+1] = testada+'';
+          novaORI.length = i+2
         }
-      }
-        console.log(novaORI)
-      
-      //tentando pegar as respostas e juntar em 1 posição so pra mandar
-      //teste.push("" + novaCHE[i] + "" + novaCHE[i + 1] + "" + novaCHE[i + 2] + "")
-      //che[i + 1] = a.concat('{', novaCHE[i], ',', novaCHE[i + 1], ',', novaCHE[i + 2], '}')
-      //console.log(che[i+1])
+        //zeramos o novache e chez para podermos re usar
+        //na proxima instancia do for
+     novaCHE.length = 0;
+     novaCHEZ.length = 0 ;
     }
   }
+  return novaORI;
+}
+
+function repetiu(comparador, variavel){
+  for(let k=0; k < variavel.length; k++){
+    if(comparador == variavel[k]){
+     
+      return false;
+    }
+  }
+  return true;
+}
+
+function gerarAFD(estado,origem,caminho,chegada){
+  var afd = []
+  var todosEstados = [];
+  var novaCHE = [] ;
+  var novaCHEZ = [] ;
+  var contSplit=0;
+  var testada;
+  var teste;
+  var uni;
+  var duni;
+  //esse for faz ter todos os estados pois a variavel estado
+  //nao vem repetida e precisamos de 2 estados
+  for(let i = 0; i<estado.length;i++){
+    todosEstados.push(estado[i])
+    todosEstados.push(estado[i])
+  }
+  //esse codigo é o mesmo do outro para gerar estados
+  //o que muda é o final, portanto eu devo fazer uma
+  //function desse codigo
+   for (let i = 0; i < todosEstados.length; i++) {
+      split = todosEstados[i].split(',').filter(Boolean)
+    if (split.length > 1) {
+      for (let j = 0; j < origem.length; j++) {
+        if (split[contSplit] == origem[j] && caminho[j] == alfabeto[1]) {
+          novaCHEZ.push(chegada[j]);
+          contSplit++;
+          j=0;
+        }
+      }
+      contSplit=0
+        for(let j = 0; j<origem.length; j++){
+         if (split[contSplit] == origem[j] && caminho[j] == alfabeto[3]) {
+          novaCHE.push(chegada[j]);
+          contSplit++;
+          j=0
+        }
+      }
+      contSplit=0;
+      teste = novaCHE.filter(Boolean)
+      testada = novaCHEZ.filter(Boolean)
+      teste = [...new Set(teste)]
+      testada = [...new Set(testada)]
+        if(teste.length>1){
+          for(let k = 0; k < teste.length;k++){
+        uni = teste.join(",")
+          }
+        }else{
+          uni = teste;
+        }
+        if(testada.length>1){
+          for(let k = 0; k < testada.length;k++){
+        duni = testada.join(",")
+          }
+        }else{
+          duni = testada;
+        }
+        novaCHE.length = 0;
+        novaCHEZ.length = 0 ;
+    //aqui é oque muda do codigo, ele da um push na afd
+    //mas ele acaba gerando algumas duplicas
+  afd.push("{"+todosEstados[i]+"}"+alfabeto[1]+"{"+duni+"}")
+  afd.push("{"+todosEstados[i]+"}"+alfabeto[3]+"{"+uni+"}")
+     
+  }else{
+  //isso ta aqui para fazer os primeiros estados
+  if(caminho[i] == alfabeto[1]){
+  afd.push("{"+todosEstados[i]+"}"+caminho[i]+"{"+chegada[i]+"}")
+
+    }else if(caminho[i] == alfabeto[3]){
+      afd.push("{"+todosEstados[i]+"}"+caminho[i]+"{"+chegada[i]+"}")
+
+      }
+    }
+  }
+  //esse set serve para tirar todas as duplicas da afd
+      afd = [...new Set(afd)]
+
+console.log(afd)
 }
