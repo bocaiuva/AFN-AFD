@@ -71,15 +71,7 @@ function mkDia(lines) {
 }
 
 function criandoEstados(ori, cam, che) {
-  var teste;
-  var testada;
-  var novaORI = [];
-  var novaCHEZ = [];
-  var novaCHE = [];
-  var uni;
-  var duni;
-  var split;
-  var contSplit = 0;
+  var teste, testada, novaORI = [], novaCHEZ = [], novaCHE = [], uni, duni, split, contSplit = 0;
   novaORI = che.slice();
 
   for (let i = 0; i < novaORI.length; i++) {
@@ -156,7 +148,6 @@ function criandoEstados(ori, cam, che) {
 function repetiu(comparador, variavel) {
   for (let k = 0; k < variavel.length; k++) {
     if (comparador == variavel[k]) {
-
       return false;
     }
   }
@@ -261,7 +252,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: uni[0].toString(), text: '' });
         }
-
         states.push(uni[0]);
       }
 
@@ -271,14 +261,12 @@ function gerarAFD(estado, origem, caminho, chegada) {
           afd[2] = afd[2] + '{ ' + duni[i] + ' }';
         } else {
           notherModel.addNodeData({ key: duni.toString(), name: duni });
-
         }
         if (inicial.includes(duni[0])) {
           afd[1] = afd[1] + '{ ' + duni[0] + ' }';
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: duni[0].toString(), text: '' });
         }
-
         states.push(duni[0]);
       }
 
@@ -297,7 +285,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
             notherModel.addLinkData({ from: 'ini', to: todosEstados[i].toString(), text: '' });
           }
-
           states.push(todosEstados[i]);
         }
 
@@ -313,7 +300,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
             notherModel.addLinkData({ from: 'ini', to: chegada[i].toString(), text: '' });
           }
-
           states.push(chegada[i]);
         }
         linkObj = todosEstados[i].toString() + ',' + chegada[i].toString() + ',' + caminho[i];
