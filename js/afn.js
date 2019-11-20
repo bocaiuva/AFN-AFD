@@ -241,11 +241,11 @@ function gerarAFD(estado, origem, caminho, chegada) {
         } else {
           notherModel.addNodeData({ key: todosEstados[i].toString(), name: todosEstados[i] });
         }
-          if (inicial.includes(todosEstados[i])) {
-            afd[1] = afd[1] + '{ ' + todosEstados[i] + ' }';
-            notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-            notherModel.addLinkData({ from: 'ini', to: todosEstados[i].toString(), text: '' });
-        }  
+        if (inicial.includes(todosEstados[i])) {
+          afd[1] = afd[1] + '{ ' + todosEstados[i] + ' }';
+          notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
+          notherModel.addLinkData({ from: 'ini', to: todosEstados[i].toString(), text: '' });
+        }
         states.push(todosEstados[i]);
       }
 
@@ -260,8 +260,8 @@ function gerarAFD(estado, origem, caminho, chegada) {
           afd[1] = afd[1] + '{ ' + uni[0] + ' }';
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: uni[0].toString(), text: '' });
-        } 
-         
+        }
+
         states.push(uni[0]);
       }
 
@@ -272,13 +272,13 @@ function gerarAFD(estado, origem, caminho, chegada) {
         } else {
           notherModel.addNodeData({ key: duni.toString(), name: duni });
 
-        } 
+        }
         if (inicial.includes(duni[0])) {
           afd[1] = afd[1] + '{ ' + duni[0] + ' }';
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: duni[0].toString(), text: '' });
-        } 
-          
+        }
+
         states.push(duni[0]);
       }
 
@@ -296,8 +296,8 @@ function gerarAFD(estado, origem, caminho, chegada) {
             afd[1] = afd[1] + '{ ' + todosEstados[i] + ' }';
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
             notherModel.addLinkData({ from: 'ini', to: todosEstados[i].toString(), text: '' });
-          } 
-            
+          }
+
           states.push(todosEstados[i]);
         }
 
@@ -305,7 +305,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
           if (chegada[i].includes(final)) {
             notherModel.addNodeData({ key: chegada[i].toString(), name: chegada[i], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + chegada[i] + ' }';
-          }  else {
+          } else {
             notherModel.addNodeData({ key: chegada[i].toString(), name: chegada[i] });
           }
           if (inicial.includes(chegada[i])) {
@@ -313,7 +313,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
             notherModel.addLinkData({ from: 'ini', to: chegada[i].toString(), text: '' });
           }
-            
+
           states.push(chegada[i]);
         }
         linkObj = todosEstados[i].toString() + ',' + chegada[i].toString() + ',' + caminho[i];
