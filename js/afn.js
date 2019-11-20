@@ -453,11 +453,9 @@ function afnSkeleton() {
 
 function hideOnError() {
   document.getElementById("myDiagramDiv").style.display = "none";
-  document.getElementById("headAFN").style.display = "none";
-  document.getElementById("headAFD").style.display = "none";
-  document.getElementById("headOut").style.display = "none";
   document.getElementById("arqSaida").style.display = "none";
   document.getElementById("afdDiv").style.display = "none";
+  document.getElementById("head").style.display = "none";
   document.getElementById("divBtn").innerHTML = "";
   document.getElementById("divAfn").style.display = "none";
   document.getElementById("erro").innerHTML = "Oop. Formato errado, seu alfabeto é " + alfabeto;
@@ -466,12 +464,10 @@ function hideOnError() {
 }
 
 function hideOnSkeleton() {
-  document.getElementById("headAFN").style.display = "block";
-  document.getElementById("headAFD").style.display = "block";
-  document.getElementById("headOut").style.display = "block";
   document.getElementById("myDiagramDiv").style.display = "block";
   document.getElementById("afdDiv").style.display = "block";
   document.getElementById("arqSaida").style.display = "block";
+  document.getElementById("head").style.display = "block";
   document.getElementById("restart").style.display = "block";
   document.getElementById("divBtn").innerHTML = "";
   document.getElementById("divAfn").style.display = "none";
