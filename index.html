@@ -5,7 +5,7 @@
 	<title>AFN para AFD</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
+
 	<!--===============================================================================================-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/gojs/2.0.17/go-debug-module.js"></script>
 	<!--===============================================================================================-->
@@ -25,7 +25,7 @@
 	<!--===============================================================================================-->
 	<script src="js/afn.js"></script>
 	<!--===============================================================================================-->
-	
+
 </head>
 
 <body>
@@ -54,11 +54,27 @@
 					</button>
 				</div>
 			</div>
-			<br>
-			<p id="erro" style="display:none; color:rgb(0, 150, 173);margin:auto;  text-align: center;"></p>
-			<div id="myDiagramDiv" style="display:none; width:500px; height:300px; background-color: #DAE4E4;margin:auto;"></div>
 
-			<p id="restart" style="text-align: center; display:none;"><a href="#" onclick="location.reload()"><br>Começar novamente</a></p>
+			<p id="erro" style="display:none; color:rgb(0, 150, 173);margin:auto; text-align: center;"></p>
+			<p id="restart" style="text-align: center; display:none;"><a href="#" onclick="location.reload()">Começar novamente</a></p>
+			<br>
+			<table width="890px">
+				<tr>
+					<td width="50%" style="text-align: left;">
+						<p id="headAFN" style="display:none; color:rgb(0, 150, 173);margin:auto; text-align: center;float:left;"><b>AFN</b></p><br>
+					</td>
+					<td width="50%" style="text-align: right;">
+						<p id="headAFD" style="display:none; color:rgb(0, 150, 173);margin:auto; text-align: center;float:right;"><b>AFD</b></p><br>
+					</td>
+				</tr>
+			</table>
+
+			<div id="myDiagramDiv" style="display:none; width:400px; height:400px; background-color: #DAE4E4;float:left;"></div>
+			<div id="afdDiv" style="display:none; width:400px; height:400px; background-color: #DAE4E4;float:right;"></div>
+
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+			<p id="headOut" style="display:none; color:rgb(0, 150, 173); text-align: center;margin:auto;"><b>Arquivo de Saída AFD</b></p>
+			<div id="arqSaida" style="display:none; text-align:center;width:400px; background-color: #DAE4E4;margin:auto;"></div>
 		</div>
 	</div>
 </body>
