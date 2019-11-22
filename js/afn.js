@@ -31,7 +31,7 @@ function mkDia(lines) {
       if (!alfabeto.includes(est[1])) {
         hideOnError();
       }
-
+        est = est.filter(Boolean);
       if (!estados.includes(est[0])) {
         if (inicial.includes(new String(est[0]).valueOf().trim())) {
           model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
@@ -45,7 +45,7 @@ function mkDia(lines) {
 
         model.addNodeData(node);
         estados.push(est[0]);
-
+       
         if (est[0] != est[2] && !estados.includes(est[2])) {
           if (inicial.includes(new String(est[2]).valueOf().trim())) {
             model.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
@@ -54,7 +54,7 @@ function mkDia(lines) {
 
           if (final.includes(new String(est[2]).valueOf().trim())) {
             var node = { key: est[2], name: est[2], fig: "Ring" };
-          } else {
+          } else if(est[2] != undefined) {
             var node = { key: est[2], name: est[2] };
           }
           model.addNodeData(node);
@@ -181,12 +181,11 @@ function gerarAFD(estado, origem, caminho, chegada) {
     todosEstados.push(estado[i].trim());
   }
   todosEstados.push('E')
-  console.log(todosEstados)
   //esse codigo é o mesmo do outro para gerar estados
   //o que muda é o final, portanto eu devo fazer uma
   //function desse codigo
   for (let i = 0; i < todosEstados.length; i++) {
-    if(todosEstados[i]== 'E'){
+    if(todosEstados[i]== 'E' && cont>0){
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[1] + " { " + todosEstados[i] + " }")
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[3] + " { " + todosEstados[i] + " }")
       notherModel.addLinkData({ from: todosEstados[i].toString(), to: todosEstados.toString(), text: alfabeto[1] });
@@ -204,7 +203,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
           j = 0;
         }
       }
-      cont=0
       contSplit = 0
       for (let j = 0; j < origem.length; j++) {
         if (split[contSplit] == origem[j] && caminho[j] == alfabeto[3]) {
@@ -213,15 +211,15 @@ function gerarAFD(estado, origem, caminho, chegada) {
           j = 0
         }
       }
-      cont=0
       contSplit = 0;
       teste = novaCHE.filter(Boolean)
       testada = novaCHEZ.filter(Boolean)
       if(teste.length==0){
         teste = 'E'
-      }
-      if(testada.length==0){
+        cont++;
+      }else if(testada.length==0){
         testada= 'E'
+        cont++
       }
       teste = [...new Set(teste)]
       testada = [...new Set(testada)]
@@ -238,11 +236,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
         }
       } else {
         duni = testada;
-      }
-      if(novaCHE == 'Erro'){
-        todosEstados.push(novaCHE);
-      }else if(novaCHEZ == 'Erro'){
-        todosEstados.push(novaCHEZ);
       }
       novaCHE.length = 0;
       novaCHEZ.length = 0;
@@ -276,7 +269,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
         states.push(todosEstados[i]);
       }      
         teste = uni.slice()
-        console.log(teste)
         split = teste[0].split(',').filter(Boolean)
         if(split.length>1){
       if (!states.includes(uni[0])) {
@@ -294,7 +286,6 @@ function gerarAFD(estado, origem, caminho, chegada) {
         }
       }
       testada = duni.slice()
-      console.log(testada)
         split = testada[0].split(',').filter(Boolean)
       if(split.length>1){
       if (!states.includes(duni[0])) {
@@ -317,6 +308,12 @@ function gerarAFD(estado, origem, caminho, chegada) {
       for(let k=0; k< todosEstados.length; k++){
         for(let m =0; m<todosEstados.length; m++){
       if (todosEstados[k] == origem[m] && caminho[m] == alfabeto[1]) {
+        
+        if(chegada[k] == ''){
+          chegada[k] ='E'
+          cont++
+        }
+       // console.log(chegada[k])
      //console.log(states.includes(todosEstados[k]))
      //console.log(states)
      //console.log(todosEstados[k])
