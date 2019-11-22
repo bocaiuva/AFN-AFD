@@ -1,4 +1,4 @@
-var alfabeto, inicial = [], final = [], estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel),
+var alfabeto, inicial = [],inicialDois =[], final = [], estados = [], $ = go.GraphObject.make, model = $(go.GraphLinksModel),
   notherModel = $(go.GraphLinksModel);
 var origem = [], caminho = [], chegada = [];
 
@@ -9,8 +9,11 @@ function dividir() {
   for (var i = 0; i < arrayLi.length; i++) {
     mkDia(arrayLi[i].split(':'))
   }
+  for(let i=0;i<inicial.length;i++){
+    inicialDois = inicial.join(',')
+  }
+  inicial = inicialDois
   var novoEstado = criandoEstados(origem, caminho, chegada);
-  
   gerarAFD(novoEstado, origem, caminho, chegada)
 }
 function mkDia(lines) {
@@ -72,13 +75,13 @@ function mkDia(lines) {
 }
 
 function criandoEstados(ori, cam, che) {
-  var juntarIn =[], cont, teste, testada, novaORI = [], novaCHEZ = [], novaCHE = [], uni, duni, split, contSplit = 0;
+  var juntarIn =[], teste, testada, novaORI = [], novaCHEZ = [], novaCHE = [], uni, duni, split, contSplit = 0;
   novaORI = che.slice();
   if(inicial.length>1){
-    for(let i = 0; i<inicial.length; i++){
-      juntarIn= inicial.join(",")
-    }
-    novaORI[0] = juntarIn+"";
+   
+    novaORI[0] = inicial+"";
+  }else{
+    novaORI[0] = ori[0];
   }
   for (let i = 0; i < novaORI.length; i++) {
     //para pegar respostas separadas
@@ -92,8 +95,6 @@ function criandoEstados(ori, cam, che) {
         if (split[contSplit] == ori[j] && cam[j] == alfabeto[1]) {
           novaCHEZ.push(che[j]);
           contSplit++;
-          if(novaCHEZ == undefined){
-          }
           
           j = 0;
         }
@@ -137,8 +138,6 @@ function criandoEstados(ori, cam, che) {
       }
       //aqui verificamos se já existe um estado
       //caso não exista ele é colocado no novaORI
-    
-      
       if (repetiu(uni, novaORI)) {
         novaORI.length = i + 2
         novaORI[i + 1] = teste + '';
@@ -151,15 +150,16 @@ function criandoEstados(ori, cam, che) {
           i++
         }
         novaORI[i + 1] = testada + '';
-        
+        if(repetiu(novaORI, novaORI[i+1]&& inicial.length>1)){
+          i--
+        }
       
       }
-      
-      
       //zeramos o novache e chez para podermos re usar
       //na proxima instancia do for
       novaCHE.length = 0;
       novaCHEZ.length = 0;
+      novaORI = novaORI.filter(Boolean)
     }
   }
   return novaORI;
@@ -178,7 +178,7 @@ function repetiu(comparador, variavel) {
 }
 
 function gerarAFD(estado, origem, caminho, chegada) {
-  var afd = [], todosEstados = [], novaCHE = [], novaCHEZ = [], contSplit = 0, testada, teste, uni, duni, states = [], linkObjArr = [], linkObj;
+  var afd = [],cont=0, todosEstados = [], novaCHE = [], novaCHEZ = [], contSplit = 0, testada, teste, uni, duni, states = [], linkObjArr = [], linkObj;
   afd.push("AB:" + alfabeto);
   afd.push("<br>i: ");
   afd.push("<br>f: ");
@@ -201,14 +201,19 @@ function gerarAFD(estado, origem, caminho, chegada) {
           j = 0;
         }
       }
+     
+      cont=0
       contSplit = 0
       for (let j = 0; j < origem.length; j++) {
         if (split[contSplit] == origem[j] && caminho[j] == alfabeto[3]) {
           novaCHE.push(chegada[j]);
           contSplit++;
+         
           j = 0
         }
       }
+     
+      cont=0
       contSplit = 0;
       teste = novaCHE.filter(Boolean)
       testada = novaCHEZ.filter(Boolean)
@@ -228,20 +233,24 @@ function gerarAFD(estado, origem, caminho, chegada) {
       } else {
         duni = testada;
       }
+      if(novaCHE == 'Erro'){
+        todosEstados.push(novaCHE);
+      }else if(novaCHEZ == 'Erro'){
+        todosEstados.push(novaCHEZ);
+      }
       novaCHE.length = 0;
       novaCHEZ.length = 0;
       //aqui é oque muda do codigo, ele da um push na afd
       //mas ele acaba gerando algumas duplicas
-
+      
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[1] + " { " + duni + " }")
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[3] + " { " + uni + " }")
-
+      afd = [... new Set(afd)]
       linkObj = todosEstados[i].toString() + ',' + duni.toString() + ',' + alfabeto[1];
       if (!linkObjArr.includes(linkObj)) {
         notherModel.addLinkData({ from: todosEstados[i].toString(), to: duni.toString(), text: alfabeto[1] });
         linkObjArr.push(linkObj);
       }
-
       linkObj = todosEstados[i].toString() + ',' + uni.toString() + ',' + alfabeto[3];
       if (!linkObjArr.includes(linkObj)) {
         notherModel.addLinkData({ from: todosEstados[i].toString(), to: uni.toString(), text: alfabeto[3] });
@@ -254,13 +263,15 @@ function gerarAFD(estado, origem, caminho, chegada) {
           afd[2] = afd[2] + '{ ' + todosEstados[i] + ' }';
         } else {
           notherModel.addNodeData({ key: todosEstados[i].toString(), name: todosEstados[i] });
-        }
+        }//console.log(inicial)
+        //console.log(todosEstados[i])
         if (inicial.includes(todosEstados[i])) {
           afd[1] = afd[1] + '{ ' + todosEstados[i] + ' }';
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: todosEstados[i].toString(), text: '' });
         }
         states.push(todosEstados[i]);
+        
       }
 
       if (!states.includes(uni[0])) {
@@ -271,13 +282,12 @@ function gerarAFD(estado, origem, caminho, chegada) {
           notherModel.addNodeData({ key: uni.toString(), name: uni });
         }
         if (inicial.includes(uni[0])) {
-          afd[1] = afd[1] + '{ ' + uni[0] + ' }';
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: uni[0].toString(), text: '' });
         }
         states.push(uni[0]);
+      
       }
-
       if (!states.includes(duni[0])) {
         if (todosEstados[i].includes(final)) {
           notherModel.addNodeData({ key: duni.toString(), name: duni, fig: "Ring" });
@@ -285,95 +295,100 @@ function gerarAFD(estado, origem, caminho, chegada) {
         } else {
           notherModel.addNodeData({ key: duni.toString(), name: duni });
         }
+        
         if (inicial.includes(duni[0])) {
-          afd[1] = afd[1] + '{ ' + duni[0] + ' }';
           notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
           notherModel.addLinkData({ from: 'ini', to: duni[0].toString(), text: '' });
         }
         states.push(duni[0]);
+        
       }
 
     } else {
       //isso ta aqui para fazer os primeiros estados
-    
       for(let k=0; k< todosEstados.length; k++){
-        console.log(k)
-      if (todosEstados[k] == origem[k] && caminho[k] == alfabeto[1]) {
-      for(let j = 0; j<todosEstados.length; j++){
-        console.log(todosEstados[j])
-        if (!states.includes(todosEstados[j])) {
-          if (todosEstados[j].includes(final)) {
-            notherModel.addNodeData({ key: todosEstados[j].toString(), name: todosEstados[j], fig: "Ring" });
-            afd[2] = afd[2] + '{ ' + todosEstados[j] + ' }';
+        for(let m =0; m<todosEstados.length; m++){
+      if (todosEstados[k] == origem[m] && caminho[m] == alfabeto[1]) {
+     
+     console.log(states.includes(todosEstados[k]))
+     console.log(states)
+     console.log(todosEstados[k])
+        if (!states.includes(todosEstados[k])) {
+          if (todosEstados[k].includes(final)) {
+            notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k], fig: "Ring" });
+            afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
-            notherModel.addNodeData({ key: todosEstados[j].toString(), name: todosEstados[j] });
+            notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k] });
           }
-          if (inicial.includes(todosEstados[j])) {
-            afd[1] = afd[1] + '{ ' + todosEstados[j] + ' }';
+          if (inicial.includes(todosEstados[k])) {
+            afd[1] = afd[1] + '{ ' + todosEstados[k] + ' }';
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-            notherModel.addLinkData({ from: 'ini', to: todosEstados[j].toString(), text: '' });
+            notherModel.addLinkData({ from: 'ini', to: todosEstados[k].toString(), text: '' });
           }
-          states.push(todosEstados[j]);
+          states.push(todosEstados[k]);
           
-        }console.log(j)
-        if (!states.includes(chegada[j])) {
-          if (chegada[j].includes(final)) {
+        }
+        if (!states.includes(chegada[m])) {
+          if (chegada[m].includes(final)) {
             
-            notherModel.addNodeData({ key: chegada[j].toString(), name: chegada[j], fig: "Ring" });
-            afd[2] = afd[2] + '{ ' + chegada[j] + ' }';
+            notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m], fig: "Ring" });
+            afd[2] = afd[2] + '{ ' + chegada[m] + ' }';
           } else {
-            notherModel.addNodeData({ key: chegada[j].toString(), name: chegada[j] });
+            notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m] });
           }
-          if (inicial.includes(chegada[j])) {
-            afd[1] = afd[1] + '{ ' + chegada[j] + ' }';
+          
+          if (inicial.includes(chegada[m])) {
+            afd[1] = afd[1] + '{ ' + chegada[m] + ' }';
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-            notherModel.addLinkData({ from: 'ini', to: chegada[j].toString(), text: '' });
+            notherModel.addLinkData({ from: 'ini', to: chegada[m].toString(), text: '' });
           }
-          states.push(chegada[j]);
+          states.push(chegada[m]);
         }
-        linkObj = todosEstados[j].toString() + ',' + chegada[j].toString() + ',' + caminho[j];
+        linkObj = todosEstados[k].toString() + ',' + chegada[m].toString() + ',' + caminho[m];
         if (!linkObjArr.includes(linkObj)) {
-          notherModel.addLinkData({ from: todosEstados[j].toString(), to: chegada[j].toString(), text: caminho[j] });
+          notherModel.addLinkData({ from: todosEstados[k].toString(), to: chegada[m].toString(), text: caminho[m] });
           linkObjArr.push(linkObj);
 
-          afd.push("<br>{ " + todosEstados[j] + " } " + caminho[j] + " { " + chegada[j] + " }")
+          afd.push("<br>{ " + todosEstados[k] + " } " + caminho[m] + " { " + chegada[m] + " }")
         }
-      }}else if (todosEstados[k] == origem[k] && caminho[k] == alfabeto[1]) {
-      for(let j = 0; j<todosEstados.length; j++){
-        if (!states.includes(todosEstados[i])) {
-          if (todosEstados[j].includes(final)) {
-            notherModel.addNodeData({ key: todosEstados[j].toString(), name: todosEstados[j], fig: "Ring" });
-            afd[2] = afd[2] + '{ ' + todosEstados[j] + ' }';
+      }} for(let m =0; m<todosEstados.length; m++){
+      if (todosEstados[k] == origem[m] && caminho[m] == alfabeto[3]) {
+      
+      
+        if (!states.includes(todosEstados[k])) {
+          if (todosEstados[k].includes(final)) {
+            notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k], fig: "Ring" });
+            afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
-            notherModel.addNodeData({ key: todosEstados[j].toString(), name: todosEstados[j] });
+            notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k] });
           }
-          if (inicial.includes(todosEstados[j])) {
-            afd[1] = afd[1] + '{ ' + todosEstados[j] + ' }';
+          if (inicial.includes(todosEstados[k])) {
+            afd[1] = afd[1] + '{ ' + todosEstados[k] + ' }';
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-            notherModel.addLinkData({ from: 'ini', to: todosEstados[j].toString(), text: '' });
+            notherModel.addLinkData({ from: 'ini', to: todosEstados[k].toString(), text: '' });
           }
-          states.push(todosEstados[j]);
+          states.push(todosEstados[k]);
         }
-
-        if (!states.includes(chegada[j])) {
-          if (todosEstados[j].includes(final)) {
-            notherModel.addNodeData({ key: chegada[j].toString(), name: chegada[j], fig: "Ring" });
-            afd[2] = afd[2] + '{ ' + todosEstados[j] + ' }';
+        
+        if (!states.includes(chegada[m])) {
+          if (todosEstados[k].includes(final)) {
+            notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m], fig: "Ring" });
+            afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
-            notherModel.addNodeData({ key: chegada[j].toString(), name: chegada[j] });
+            notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m] });
           }
-          if (inicial.includes(chegada[j])) {
-            afd[1] = afd[1] + '{ ' + chegada[j] + ' }';
+          if (inicial.includes(chegada[m])) {
+            afd[1] = afd[1] + '{ ' + chegada[m] + ' }';
             notherModel.addNodeData({ key: 'ini', name: '', fig: "BpmnActivityAdHoc" });
-            notherModel.addLinkData({ from: 'ini', to: chegada[j].toString(), text: '' });
+            notherModel.addLinkData({ from: 'ini', to: chegada[m].toString(), text: '' });
           }
-          states.push(chegada[j]);
+          states.push(chegada[m]);
         }
-        linkObj = todosEstados[j].toString() + ',' + chegada[j].toString() + ',' + caminho[j];
+        linkObj = todosEstados[k].toString() + ',' + chegada[m].toString() + ',' + caminho[m];
         if (!linkObjArr.includes(linkObj)) {
-          notherModel.addLinkData({ from: todosEstados[j].toString(), to: chegada[j].toString(), text: caminho[j] });
+          notherModel.addLinkData({ from: todosEstados[k].toString(), to: chegada[m].toString(), text: caminho[m] });
           linkObjArr.push(linkObj);
-          afd.push("<br>{ " + todosEstados[j] + " } " + caminho[j] + " { " + chegada[j] + " }")
+          afd.push("<br>{ " + todosEstados[k] + " } " + caminho[m] + " { " + chegada[m] + " }")
         }
       }
      }
@@ -383,7 +398,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
   
   afd = [...new Set(afd)];
 
-  //console.log(afd)
+ // console.log(afd)
   document.getElementById("arqSaida").innerHTML = afd.join(" ");
 }
 
