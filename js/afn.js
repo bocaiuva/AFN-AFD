@@ -188,8 +188,8 @@ function gerarAFD(estado, origem, caminho, chegada) {
     if(todosEstados[i]== 'E' && cont>0){
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[1] + " { " + todosEstados[i] + " }")
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[3] + " { " + todosEstados[i] + " }")
-      notherModel.addLinkData({ from: todosEstados[i].toString(), to: todosEstados.toString(), text: alfabeto[1] });
-      notherModel.addLinkData({ from: todosEstados[i].toString(), to: todosEstados.toString(), text: alfabeto[3] });
+      notherModel.addLinkData({ from: todosEstados[i].toString(), to: todosEstados[i].toString(), text: alfabeto[1] + ',' + alfabeto[3]});
+      
       linkObj = todosEstados[i].toString() + ',' + alfabeto[1];
       linkObj = todosEstados[i].toString() +  ',' + alfabeto[3];
     break;
