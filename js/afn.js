@@ -259,7 +259,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
 
       
       if (!states.includes(todosEstados[i])) {
-        if (todosEstados[i] == final.toString()) {
+        if (todosEstados[i].includes(final)) {
           notherModel.addNodeData({ key: todosEstados[i].toString(), name: todosEstados[i], fig: "Ring" });
           afd[2] = afd[2] + '{ ' + todosEstados[i] + ' }';
         } else {
@@ -276,7 +276,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
         split = teste[0].split(',').filter(Boolean)
         if(split.length>1){
       if (!states.includes(uni[0])) {
-        if (uni[0] == final.toString()) {
+        if (uni[0].includes(final)) {
           notherModel.addNodeData({ key: uni.toString(), name: uni, fig: "Ring" });
           afd[2] = afd[2] + '{ ' + uni[i] + ' }';
         } else {
@@ -293,7 +293,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
         split = testada[0].split(',').filter(Boolean)
       if(split.length>1){
       if (!states.includes(duni[0])) {
-        if (todosEstados[i] == final.toString()) {
+        if (todosEstados[i].includes(final)) {
           notherModel.addNodeData({ key: duni.toString(), name: duni, fig: "Ring" });
           afd[2] = afd[2] + '{ ' + duni[i] + ' }';
         } else {
@@ -322,7 +322,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
      //console.log(states)
      //console.log(todosEstados[k])
         if (!states.includes(todosEstados[k])) {
-          if (todosEstados[k] == final.toString()) {
+          if (todosEstados[k].includes(final)) {
             notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
@@ -336,7 +336,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
           states.push(todosEstados[k]);
         }
         if (!states.includes(chegada[m])) {
-          if (chegada[m] == final.toString()) {
+          if (chegada[m].includes(final)) {
             notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + chegada[m] + ' }';
           } else {
@@ -358,7 +358,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
       }} for(let m =0; m<todosEstados.length; m++){
       if (todosEstados[k] == origem[m] && caminho[m] == alfabeto[3]) {
         if (!states.includes(todosEstados[k])) {
-          if (todosEstados[k] == final.toString()) {
+          if (todosEstados[k].includes(final)) {
             notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
@@ -374,7 +374,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
 
         console.log(todosEstados[k]);
         if (!states.includes(chegada[m])) {
-          if (todosEstados[k] == final.toString()) {
+          if (todosEstados[k].includes(final)) {
             notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
