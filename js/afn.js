@@ -174,18 +174,20 @@ function gerarAFD(estado, origem, caminho, chegada) {
   afd.push("AB:" + alfabeto);
   afd.push("<br>i: ");
   afd.push("<br>f: ");
+  //var final.toString( = final.toString();
+  
   //esse for faz ter todos os estados pois a variavel estado
   //nao vem repetida e precisamos de 2 estados
   for (let i = 0; i < estado.length; i++) {
     todosEstados.push(estado[i].trim());
     todosEstados.push(estado[i].trim());
   }
-  todosEstados.push('E')
+  todosEstados.push('e')
   //esse codigo é o mesmo do outro para gerar estados
   //o que muda é o final, portanto eu devo fazer uma
   //function desse codigo
   for (let i = 0; i < todosEstados.length; i++) {
-    if(todosEstados[i]== 'E' && cont>0){
+    if(todosEstados[i]== 'e' && cont>0){
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[1] + " { " + todosEstados[i] + " }")
       afd.push("<br>{ " + todosEstados[i] + " } " + alfabeto[3] + " { " + todosEstados[i] + " }")
       notherModel.addLinkData({ from: todosEstados[i].toString(), to: todosEstados[i].toString(), text: alfabeto[1] + ',' + alfabeto[3]});
@@ -215,10 +217,10 @@ function gerarAFD(estado, origem, caminho, chegada) {
       teste = novaCHE.filter(Boolean)
       testada = novaCHEZ.filter(Boolean)
       if(teste.length==0){
-        teste = 'E'
+        teste = 'e'
         cont++;
       }else if(testada.length==0){
-        testada= 'E'
+        testada= 'e'
         cont++
       }
       teste = [...new Set(teste)]
@@ -254,8 +256,10 @@ function gerarAFD(estado, origem, caminho, chegada) {
         notherModel.addLinkData({ from: todosEstados[i].toString(), to: uni.toString(), text: alfabeto[3] });
         linkObjArr.push(linkObj);
       }
+
+      
       if (!states.includes(todosEstados[i])) {
-        if (todosEstados[i].includes(final)) {
+        if (todosEstados[i] == final.toString()) {
           notherModel.addNodeData({ key: todosEstados[i].toString(), name: todosEstados[i], fig: "Ring" });
           afd[2] = afd[2] + '{ ' + todosEstados[i] + ' }';
         } else {
@@ -272,7 +276,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
         split = teste[0].split(',').filter(Boolean)
         if(split.length>1){
       if (!states.includes(uni[0])) {
-        if (uni[0].includes(final)) {
+        if (uni[0] == final.toString()) {
           notherModel.addNodeData({ key: uni.toString(), name: uni, fig: "Ring" });
           afd[2] = afd[2] + '{ ' + uni[i] + ' }';
         } else {
@@ -289,7 +293,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
         split = testada[0].split(',').filter(Boolean)
       if(split.length>1){
       if (!states.includes(duni[0])) {
-        if (todosEstados[i].includes(final)) {
+        if (todosEstados[i] == final.toString()) {
           notherModel.addNodeData({ key: duni.toString(), name: duni, fig: "Ring" });
           afd[2] = afd[2] + '{ ' + duni[i] + ' }';
         } else {
@@ -310,7 +314,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
       if (todosEstados[k] == origem[m] && caminho[m] == alfabeto[1]) {
         
         if(chegada[k] == ''){
-          chegada[k] ='E'
+          chegada[k] ='e'
           cont++
         }
        // console.log(chegada[k])
@@ -318,7 +322,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
      //console.log(states)
      //console.log(todosEstados[k])
         if (!states.includes(todosEstados[k])) {
-          if (todosEstados[k].includes(final)) {
+          if (todosEstados[k] == final.toString()) {
             notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
@@ -332,7 +336,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
           states.push(todosEstados[k]);
         }
         if (!states.includes(chegada[m])) {
-          if (chegada[m].includes(final)) {
+          if (chegada[m] == final.toString()) {
             notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + chegada[m] + ' }';
           } else {
@@ -354,7 +358,7 @@ function gerarAFD(estado, origem, caminho, chegada) {
       }} for(let m =0; m<todosEstados.length; m++){
       if (todosEstados[k] == origem[m] && caminho[m] == alfabeto[3]) {
         if (!states.includes(todosEstados[k])) {
-          if (todosEstados[k].includes(final)) {
+          if (todosEstados[k] == final.toString()) {
             notherModel.addNodeData({ key: todosEstados[k].toString(), name: todosEstados[k], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
@@ -367,8 +371,10 @@ function gerarAFD(estado, origem, caminho, chegada) {
           }
           states.push(todosEstados[k]);
         }
+
+        console.log(todosEstados[k]);
         if (!states.includes(chegada[m])) {
-          if (todosEstados[k].includes(final)) {
+          if (todosEstados[k] == final.toString()) {
             notherModel.addNodeData({ key: chegada[m].toString(), name: chegada[m], fig: "Ring" });
             afd[2] = afd[2] + '{ ' + todosEstados[k] + ' }';
           } else {
@@ -503,6 +509,8 @@ function hideOnError() {
   document.getElementById("arqSaida").style.display = "none";
   document.getElementById("afdDiv").style.display = "none";
   document.getElementById("head").style.display = "none";
+  document.getElementById("headafd").style.display = "none";
+  document.getElementById("headout").style.display = "none";
   document.getElementById("divBtn").innerHTML = "";
   document.getElementById("divAfn").style.display = "none";
   document.getElementById("erro").innerHTML = "Oop. Formato errado, seu alfabeto é " + alfabeto;
@@ -511,10 +519,12 @@ function hideOnError() {
 }
 
 function hideOnSkeleton() {
+  document.getElementById("head").style.display = "block";
+  document.getElementById("headafd").style.display = "block";
+  document.getElementById("headout").style.display = "block";
   document.getElementById("myDiagramDiv").style.display = "block";
   document.getElementById("afdDiv").style.display = "block";
   document.getElementById("arqSaida").style.display = "block";
-  document.getElementById("head").style.display = "block";
   document.getElementById("restart").style.display = "block";
   document.getElementById("divBtn").innerHTML = "";
   document.getElementById("divAfn").style.display = "none";
